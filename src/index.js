@@ -33,15 +33,12 @@ class Board extends React.Component {
   handleClick(i) {
     const newState = { ...this.state };
 
-    if (!isNaN(i) && newState.squares[i] === null && newState.winner === null) {
-      if (newState.isXNext) {
-        newState.squares[i] = "X";
-      } else {
-        newState.squares[i] = "O";
-      }
-
-      newState.isXNext = !newState.isXNext;
+    if (isNaN(i) && newState.squares[i] && newState.winner) {
+      return;
     }
+
+    newState.squares[i] = newState.isXNext ? "X" : "O";
+    newState.isXNext = !newState.isXNext;
 
     // TODO: push to history
 
