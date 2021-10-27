@@ -16,7 +16,7 @@ class Board extends React.Component {
     super(props);
     this.state = {
       squares: Array(9).fill(null),
-      xIsNext: true,
+      isXNext: true,
     };
   }
 
@@ -32,14 +32,14 @@ class Board extends React.Component {
   handleClick(i) {
     const newState = { ...this.state };
 
-    if (!isNaN(i)) {
-      if (newState.xIsNext) {
+    if (!isNaN(i) && newState.squares[i] === null) {
+      if (newState.isXNext) {
         newState.squares[i] = "X";
       } else {
         newState.squares[i] = "O";
       }
 
-      newState.xIsNext = !newState.xIsNext;
+      newState.isXNext = !newState.isXNext;
     }
 
     // TODO: push to history
@@ -49,7 +49,7 @@ class Board extends React.Component {
   }
 
   render() {
-    const next = this.state.xIsNext ? "X" : "O";
+    const next = this.state.isXNext ? "X" : "O";
     const status = "Next player: " + next;
 
     return (
