@@ -62,22 +62,23 @@ class Game extends React.Component {
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
-    const winner = calculateWinner(current.squares);
+    let winner = this.state.winner;
+
     const squares = current.squares.slice();
-    if (isNaN(i) || !!winner || !!squares[i]) {
-      return;
+    if (!isNaN(i) && !winner && !squares[i]) {
+      squares[i] = this.state.isXNext ? "X" : "O";
+      winner = calculateWinner(squares);
+      this.setState({
+        history: history.concat([
+          {
+            squares,
+          },
+        ]),
+        stepNumber: history.length,
+        isXNext: !this.state.isXNext,
+        winner,
+      });
     }
-    squares[i] = this.state.isXNext ? "X" : "O";
-    this.setState({
-      history: history.concat([
-        {
-          squares,
-        },
-      ]),
-      stepNumber: history.length,
-      isXNext: !this.state.isXNext,
-      winner,
-    });
   }
 
   jumpTo(i) {
