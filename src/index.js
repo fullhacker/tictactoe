@@ -17,6 +17,7 @@ class Board extends React.Component {
     this.state = {
       squares: Array(9).fill(null),
       isXNext: true,
+      winner: null,
     };
   }
 
@@ -32,7 +33,7 @@ class Board extends React.Component {
   handleClick(i) {
     const newState = { ...this.state };
 
-    if (!isNaN(i) && newState.squares[i] === null) {
+    if (!isNaN(i) && newState.squares[i] === null && newState.winner === null) {
       if (newState.isXNext) {
         newState.squares[i] = "X";
       } else {
@@ -44,13 +45,18 @@ class Board extends React.Component {
 
     // TODO: push to history
 
+    // determine winner
+    newState.winner = calcluateWinner(newState.squares);
+
     // update state
     this.setState(newState);
   }
 
   render() {
-    const next = this.state.isXNext ? "X" : "O";
-    const status = "Next player: " + next;
+    const winner = this.state.winner;
+    const label = !!winner ? "Winner: " : "Next player: ";
+    const value = winner || this.state.isXNext ? "X" : "O";
+    const status = label + value;
 
     return (
       <div>
@@ -94,3 +100,23 @@ class Game extends React.Component {
 // ========================================
 
 ReactDOM.render(<Game />, document.getElementById("root"));
+
+function calcluateWinner(squares) {
+  let winner = null;
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  lines.forEach(([a, b, c]) => {
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      winner = squares[a];
+    }
+  });
+
+  return winner;
+}
