@@ -12,52 +12,18 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      isXNext: true,
-      winner: null,
-    };
-  }
-
   renderSquare(i) {
     return (
       <Square
-        value={this.state.squares[i]}
-        handleClick={() => this.handleClick(i)}
+        value={this.props.squares[i]}
+        handleClick={() => this.props.handleClick(i)}
       />
     );
   }
 
-  handleClick(i) {
-    const newState = { ...this.state };
-
-    if (isNaN(i) && newState.squares[i] && newState.winner) {
-      return;
-    }
-
-    newState.squares[i] = newState.isXNext ? "X" : "O";
-    newState.isXNext = !newState.isXNext;
-
-    // TODO: push to history
-
-    // determine winner
-    newState.winner = calcluateWinner(newState.squares);
-
-    // update state
-    this.setState(newState);
-  }
-
   render() {
-    const winner = this.state.winner;
-    const label = !!winner ? "Winner: " : "Next player: ";
-    const value = winner || this.state.isXNext ? "X" : "O";
-    const status = label + value;
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -79,14 +45,58 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: [
+        {
+          squares: Array(9).fill(null),
+        },
+      ],
+      isXNext: true,
+      winner: null,
+    };
+  }
+
+  handleClick(i) {
+    const history = this.state.history;
+    const current = history[history.length - 1];
+    const winner = calcluateWinner(current.squares);
+    const squares = current.squares.slice();
+    if (isNaN(i) || !!winner || !!squares[i]) {
+      return;
+    }
+    squares[i] = this.state.isXNext ? "X" : "O";
+    this.setState({
+      history: history.concat([
+        {
+          squares,
+        },
+      ]),
+      isXNext: !this.state.isXNext,
+    });
+  }
+
   render() {
+    const history = this.state.history;
+    const current = history[history.length - 1];
+    const winner = calcluateWinner(current.squares);
+    const label = !!winner ? "Winner: " : "Next player: ";
+    const value = winner || this.state.isXNext ? "X" : "O";
+    const status = label + value;
+
+    console.log(history);
+
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board
+            squares={current.squares}
+            handleClick={(i) => this.handleClick(i)}
+          />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
+          <div>{status}</div>
           <ol>{/* TODO */}</ol>
         </div>
       </div>
