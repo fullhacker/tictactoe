@@ -2,15 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 
-class Square extends React.Component {
-  render() {
-    const { value, handleClick } = this.props;
-    return (
-      <button className="square" onClick={() => handleClick()}>
-        {value}
-      </button>
-    );
-  }
+function Square(props) {
+  const { value, handleClick } = props;
+  return (
+    <button className="square" onClick={handleClick}>
+      {value}
+    </button>
+  );
 }
 
 class Board extends React.Component {
@@ -18,6 +16,7 @@ class Board extends React.Component {
     super(props);
     this.state = {
       squares: Array(9).fill(null),
+      xIsNext: true,
     };
   }
 
@@ -34,14 +33,24 @@ class Board extends React.Component {
     const newState = { ...this.state };
 
     if (!isNaN(i)) {
-      newState.squares[i] = "X";
+      if (newState.xIsNext) {
+        newState.squares[i] = "X";
+      } else {
+        newState.squares[i] = "O";
+      }
+
+      newState.xIsNext = !newState.xIsNext;
     }
 
+    // TODO: push to history
+
+    // update state
     this.setState(newState);
   }
 
   render() {
-    const status = "Next player: X";
+    const next = this.state.xIsNext ? "X" : "O";
+    const status = "Next player: " + next;
 
     return (
       <div>
