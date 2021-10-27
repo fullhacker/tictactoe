@@ -31,8 +31,11 @@ class Board extends React.Component {
   }
 
   handleClick(i) {
-    const newState = this.state;
-    newState.squares[i] = "X";
+    const newState = { ...this.state };
+
+    if (!isNaN(i)) {
+      newState.squares[i] = "X";
+    }
 
     this.setState(newState);
   }
